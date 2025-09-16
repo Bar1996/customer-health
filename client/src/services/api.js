@@ -53,7 +53,13 @@ export async function getCustomerHealth(id) {
   return data
 }
 
-export async function createEvent(id, event) {
-  const { data } = await api.post(`/customers/${id}/events`, event)
-  return data
+
+export async function addEvent(customerId, eventType, date) {
+  const res = await api.post(`/customers/${customerId}/events`, {
+    event_type: eventType,
+    event_date: date,
+  });
+  return res.data;
 }
+
+export default api;
