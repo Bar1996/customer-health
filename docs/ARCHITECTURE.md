@@ -65,7 +65,6 @@ The Customer Health Dashboard is built as a modern, containerized web applicatio
 - Node.js with Express framework
 - PostgreSQL with pg driver
 - CORS for cross-origin requests
-- Morgan for request logging
 
 **Key Components:**
 
