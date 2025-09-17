@@ -1,7 +1,6 @@
-import { pool } from '../config/db.js';
+import { pool } from "../config/db.js";
 
 export async function calculateHealthScore(customerId) {
-  // נמשוך את האירועים של הלקוח
   const { rows: events } = await pool.query(
     `SELECT event_type, event_value, event_date
      FROM events
@@ -9,54 +8,62 @@ export async function calculateHealthScore(customerId) {
     [customerId]
   );
 
-  if (events.length === 0) {
-    return { score: 0, factors: { message: 'No events found' } };
+  if (!events.length) {
+    return {
+      score: 0,
+      factors: {
+        logins: 0,
+        features: 0,
+        apiCalls: 0,
+        tickets: 0,
+        lateInvoices: 0,
+      },
+    };
   }
 
-  // נחשב גורמים בסיסיים
   const now = new Date();
-  const last30Days = events.filter(
-    (e) => (now - new Date(e.event_date)) / (1000 * 60 * 60 * 24) <= 30
+  const daysAgo = (d) => (now - new Date(d)) / 86400000;
+
+  // חלונות זמן
+  const last30 = events.filter((e) => daysAgo(e.event_date) <= 30);
+  const last90 = events.filter((e) => daysAgo(e.event_date) <= 90);
+
+  // ספירות/סכומים עקביים לשמות האירועים מה-UI
+  const logins = last30.filter((e) => e.event_type === "login").length;
+  const features = last30.filter((e) => e.event_type === "feature").length;
+  const apiCalls = last30
+    .filter((e) => e.event_type === "api_call")
+    .reduce((s, e) => s + (e.event_value ?? 1), 0);
+  const tickets = last30.filter((e) => e.event_type === "ticket").length;
+  const lateInvoices = last90.filter(
+    (e) => e.event_type === "late_invoice"
+  ).length; // איחורים רלוונטיים גם ברבעון
+
+  // נרמול לרמות "תקרה" ריאליות
+  // (תוכל לכוון את המספרים לפי הדאטה שלך)
+  const loginScore = Math.min(logins / 12, 1) * 25; // 12+ לוגינים ב-30 יום = 25 נק'
+  const featureScore = Math.min(features / 8, 1) * 25; // 8+ שימושי פיצ'רים = 25 נק'
+  const apiScore = Math.min(apiCalls / 100, 1) * 20; // 100+ קריאות API = 20 נק'
+  const ticketScore = (1 - Math.min(tickets / 6, 1)) * 20; // יותר מדי טיקטים מוריד
+  const invoiceScore = (1 - Math.min(lateInvoices / 2, 1)) * 10; // איחור 1-2 יוריד בהתאם
+
+  let score = Math.round(
+    loginScore + featureScore + apiScore + ticketScore + invoiceScore
   );
-
-  const logins = last30Days.filter((e) => e.event_type === 'login').length;
-  const features = last30Days.filter((e) => e.event_type === 'feature_usage').length;
-  const apiCalls = last30Days
-    .filter((e) => e.event_type === 'api_call')
-    .reduce((sum, e) => sum + e.event_value, 0);
-  const tickets = last30Days.filter((e) => e.event_type === 'support_ticket').length;
-  const lateInvoices = last30Days.filter((e) => e.event_type === 'invoice_late').length;
-
-  // נוסחה פשוטה לניקוד (0-100)
-  let score = 50;
-  score += logins * 2;
-  score += features * 3;
-  score += Math.min(apiCalls, 50) * 1;
-  score -= tickets * 5;
-  score -= lateInvoices * 10;
-
-  // נוודא שהציון בטווח 0–100
   score = Math.max(0, Math.min(100, score));
 
   return {
     score,
-    factors: {
-      logins,
-      features,
-      apiCalls,
-      tickets,
-      lateInvoices,
-    },
+    factors: { logins, features, apiCalls, tickets, lateInvoices },
   };
 }
 
 export async function addEvent(customerId, eventType, eventValue, eventDate) {
-    const { rows } = await pool.query(
-      `INSERT INTO events (customer_id, event_type, event_value, event_date)
+  const { rows } = await pool.query(
+    `INSERT INTO events (customer_id, event_type, event_value, event_date)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [customerId, eventType, eventValue ?? 1, eventDate ?? new Date()]
-    );
-    return rows[0];
-  }
-  
+    [customerId, eventType, eventValue ?? 1, eventDate ?? new Date()]
+  );
+  return rows[0];
+}
