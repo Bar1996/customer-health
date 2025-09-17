@@ -14,7 +14,7 @@ A comprehensive customer health monitoring system that tracks customer engagemen
 1. **Clone the repository:**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Bar1996/customer-health
    cd customer-health
    ```
 
