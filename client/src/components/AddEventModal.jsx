@@ -42,10 +42,10 @@ export default function AddEventModal({
             className="w-full border rounded p-2"
           >
             <option value="login">Login</option>
-            <option value="feature">Feature Usage</option>
+            <option value="feature_usage">Feature Usage</option>
             <option value="api_call">API Call</option>
-            <option value="ticket">Support Ticket</option>
-            <option value="late_invoice">Late Invoice</option>
+            <option value="support_ticket">Support Ticket</option>
+            <option value="invoice_late">Late Invoice</option>
           </select>
         </div>
 

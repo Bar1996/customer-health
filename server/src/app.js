@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === "production") {
-  const clientDist = path.join(__dirname, "../../client/dist");
+  const clientDist = path.join(__dirname, "../client/dist");
   app.use(express.static(clientDist));
 
   app.get("/api/dashboard", (_req, res) => {

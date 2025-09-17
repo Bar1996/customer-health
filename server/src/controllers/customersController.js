@@ -6,15 +6,7 @@ export async function getAllCustomers(req, res, next) {
     const { rows } = await pool.query(
       "SELECT id, name, segment, created_at FROM customers ORDER BY id"
     );
-
-    const withScores = await Promise.all(
-      rows.map(async (c) => {
-        const result = await calculateHealthScore(c.id);
-        return { ...c, health_score: result.score };
-      })
-    );
-
-    res.json(withScores);
+    res.json(rows);
   } catch (err) {
     next(err);
   }

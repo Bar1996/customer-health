@@ -61,7 +61,11 @@ export default function Dashboard() {
         isOpen={isAddEventOpen}
         onClose={() => setAddEventOpen(false)}
         customerId={activeCustomerId}
-        onEventAdded={() => fetchHealth(activeCustomerId)} // רענון health אחרי הוספה
+        onEventAdded={async () => {
+          if (activeCustomerId) {
+            await fetchHealth(activeCustomerId);
+          }
+        }} // רענון health + טבלה אחרי הוספה
       />
     </div>
   );
