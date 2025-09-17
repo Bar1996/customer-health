@@ -18,6 +18,8 @@ Currently, no authentication is required. All endpoints are publicly accessible.
 
 Simple health check endpoint to verify the API is running.
 
+![API Health Check](../screenshots/getCustomers.png)
+
 **Response:**
 
 ```json
@@ -37,6 +39,8 @@ Simple health check endpoint to verify the API is running.
 **GET** `/api/customers`
 
 Retrieves a list of all customers in the system.
+
+![GET Customers](../screenshots/getCustomers.png)
 
 **Response:**
 
@@ -69,6 +73,8 @@ Retrieves a list of all customers in the system.
 **GET** `/api/customers/:id/health`
 
 Retrieves detailed health information for a specific customer.
+
+![GET Customer Health](../screenshots/getCustomerHealth.png)
 
 **Parameters:**
 
@@ -118,6 +124,8 @@ Retrieves detailed health information for a specific customer.
 **POST** `/api/customers/:id/events`
 
 Adds a new event for a specific customer.
+
+![POST Add Event](../screenshots/postAddEvent.png)
 
 **Parameters:**
 

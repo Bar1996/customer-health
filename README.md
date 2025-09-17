@@ -124,11 +124,28 @@ Scores range from 0-100, with higher scores indicating healthier customer relati
 
 See the `screenshots/` directory for visual evidence of the running application:
 
-- Dashboard overview
-- Customer health scores
-- Event management
-- API responses
-- Test results
+### Dashboard Overview
+
+![Dashboard](screenshots/dashboard.png)
+
+### Customer Health Score
+
+![Customer Health Score](screenshots/customerHealthScore.png)
+
+### Add Event Flow
+
+![Add Event Dashboard](screenshots/addEventDashboard.png)
+
+### API Responses
+
+![GET Customers](screenshots/getCustomers.png)
+![GET Customer Health](screenshots/getCustomerHealth.png)
+![POST Add Event](screenshots/postAddEvent.png)
+
+### Docker Compose & Tests
+
+![Docker Compose](screenshots/dockerCompose.png)
+![Tests](screenshots/tests.png)
 
 ## 🤖 AI Collaboration
 

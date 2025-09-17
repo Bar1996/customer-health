@@ -37,7 +37,7 @@ DATABASE_URL=postgres://postgres:postgres@db:5432/healthdb
 ### 3. Deploy the Application
 
 ```bash
-docker-compose docker-compose --env-file .env.production up --build
+docker-compose --env-file .env.production up --build
 ```
 
 ### 4. Verify Deployment
@@ -362,12 +362,23 @@ docker exec -it customer-health-db-1 psql -U postgres -d healthdb
 
 The following screenshots demonstrate the deployed application:
 
-- **Dashboard Overview**: `screenshots/dashboard.png`
-- **Customer Health Scores**: `screenshots/customerHealthScore.png`
-- **Add Event Interface**: `screenshots/addEventDashboard.png`
-- **API Responses**: `screenshots/getCustomers.png`, `screenshots/getCustomerHealth.png`, `screenshots/postAddEvent.png`
-- **Docker Compose**: `screenshots/dockerCompose.png`
-- **Test Results**: `screenshots/tests.png`
+![Docker Compose](../screenshots/dockerCompose.png)
+
+### Application UI
+
+![Dashboard Overview](../screenshots/dashboard.png)
+![Customer Health Score](../screenshots/customerHealthScore.png)
+![Add Event Interface](../screenshots/addEventDashboard.png)
+
+### API Responses
+
+![GET Customers](../screenshots/getCustomers.png)
+![GET Customer Health](../screenshots/getCustomerHealth.png)
+![POST Add Event](../screenshots/postAddEvent.png)
+
+### Tests
+
+![Tests](../screenshots/tests.png)
 
 ## Support
 
