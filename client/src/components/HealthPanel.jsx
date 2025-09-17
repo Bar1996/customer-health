@@ -1,28 +1,34 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 function scoreColor(score) {
-  if (score >= 80) return "text-green-600 font-bold"
-  if (score >= 50) return "text-yellow-500 font-semibold"
-  return "text-red-600 font-bold"
+  if (score >= 80) return "text-green-600 font-bold";
+  if (score >= 50) return "text-yellow-500 font-semibold";
+  return "text-red-600 font-bold";
 }
 
 export default function HealthPanel({ customer, health }) {
-  if (!health) return null
+  if (!health) return null;
 
   // הופכים את האובייקט factors למערך שמתאים ל־Recharts
   const chartData = Object.entries(health.factors).map(([key, value]) => ({
     factor: key,
     value,
-  }))
+  }));
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">Customer #{customer.id} Health</h2>
+      <h2 className="text-xl font-bold mb-2">
+        {customer.name} <span className="text-gray-500"> (#{customer.id})</span>
+      </h2>
       <p className="mb-4">
-        Score:{" "}
-        <span className={scoreColor(health.score)}>
-          {health.score}
-        </span>
+        Score: <span className={scoreColor(health.score)}>{health.score}</span>
       </p>
 
       {/* תרשים עמודות */}
@@ -46,5 +52,5 @@ export default function HealthPanel({ customer, health }) {
         <li>Late invoices: {health.factors.lateInvoices}</li>
       </ul>
     </div>
-  )
+  );
 }

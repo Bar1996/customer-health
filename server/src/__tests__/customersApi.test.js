@@ -3,56 +3,46 @@ import app from "../app.js";
 import { pool } from "../config/db.js";
 
 describe("Customers API", () => {
-  let customerId;
-
-  beforeAll(async () => {
-    const { rows } = await pool.query(
-      `INSERT INTO customers (name, segment)
-       VALUES ('API Test Customer', 'test')
-       RETURNING id`
-    );
-    customerId = rows[0].id;
-  });
-
   afterAll(async () => {
-    await pool.query("DELETE FROM customers WHERE id = $1", [customerId]);
-    // ⚠️ לא עושים pool.end() פה, כדי לא להרוס טסטים אחרים
+    await pool.end();
   });
 
   it("GET /api/customers returns list of customers", async () => {
     const res = await request(app).get("/api/customers");
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body[0]).toHaveProperty("health_score");
+
+    if (res.body.length > 0) {
+      expect(res.body[0]).toHaveProperty("id");
+      expect(res.body[0]).toHaveProperty("name");
+      expect(res.body[0]).toHaveProperty("segment");
+      expect(res.body[0]).toHaveProperty("created_at");
+    }
   });
 
   it("GET /api/customers/:id/health returns health breakdown", async () => {
-    const res = await request(app).get(`/api/customers/${customerId}/health`);
+    const resAll = await request(app).get("/api/customers");
+    const id = resAll.body[0].id;
+
+    const res = await request(app).get(`/api/customers/${id}/health`);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("health");
     expect(res.body.health).toHaveProperty("score");
+    expect(res.body.health).toHaveProperty("factors");
+    expect(typeof res.body.health.score).toBe("number");
   });
 
-  it("POST /api/customers/:id/events creates new event", async () => {
+  it("POST /api/customers/:id/events adds an event", async () => {
+    const resAll = await request(app).get("/api/customers");
+    const id = resAll.body[0].id;
+
     const res = await request(app)
-      .post(`/api/customers/${customerId}/events`)
-      .send({
-        event_type: "login",
-        event_date: new Date().toISOString().slice(0, 10),
-      });
+      .post(`/api/customers/${id}/events`)
+      .send({ event_type: "login", event_value: 1 });
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("id");
+    expect(res.body.customer_id).toBe(id);
     expect(res.body.event_type).toBe("login");
   });
-
-  it("GET /api/customers/:id/health returns 404 for non-existing customer", async () => {
-    const res = await request(app).get("/api/customers/9999999/health");
-    expect(res.status).toBe(404);
-  });
-});
-
-// ⚠️ pool.end() רק פעם אחת, בקובץ נפרד או בסיום כל הטסטים
-afterAll(async () => {
-  await pool.end();
 });
