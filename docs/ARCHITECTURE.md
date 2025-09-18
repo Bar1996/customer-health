@@ -217,7 +217,6 @@ events:
 
 ### Current Monitoring
 
-- Basic request logging with Morgan
 - Console logging for errors
 - Health check endpoint
 
